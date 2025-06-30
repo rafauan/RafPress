@@ -32,4 +32,19 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function media()
+    {
+        return $this->hasOne(Media::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
 }

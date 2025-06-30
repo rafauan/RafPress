@@ -28,6 +28,25 @@ class PostResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                Forms\Components\Repeater::make('media')
+                    ->relationship('media')
+                    ->schema([
+                        Forms\Components\FileUpload::make('path')
+                            ->label('Obraz')
+                            ->disk('public')
+                            ->directory('uploads/media')
+                            ->image()
+                            ->preserveFilenames()
+                            ->required(),
+
+                        Forms\Components\TextInput::make('caption')
+                            ->label('Opis')
+                            ->maxLength(255),
+                    ])
+                    ->maxItems(1)
+                    ->label('Zdjęcie')
+                    ->columns(1)
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('content')
                     ->required()
                     ->rows(10)
@@ -36,19 +55,33 @@ class PostResource extends Resource
                 //     ->profile('simple')
                 //     ->columnSpanFull()
                 //     ->required(),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'published' => 'Published',
+                        'archived' => 'Archived',
+                    ])
+                    ->default('draft')
                     ->required(),
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required()
                     ->preload()
+                    ->default(auth()->id())
                     ->searchable(),
                 Forms\Components\Select::make('category_id')
                     ->relationship('category', 'name')
                     ->preload()
                     ->required()
                     ->searchable(),
-                Forms\Components\DateTimePicker::make('published_at'),
+                Forms\Components\Select::make('tags')
+                    ->label('Tags')
+                    ->multiple()
+                    ->relationship('tags', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->required(),
+                Forms\Components\DateTimePicker::make('published_at')->disabled(),
             ]);
     }
 
