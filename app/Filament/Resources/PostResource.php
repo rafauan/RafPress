@@ -62,6 +62,11 @@ class PostResource extends Resource
                         'archived' => 'Archived',
                     ])
                     ->default('draft')
+                    ->afterStateUpdated(function ($state, $set, $get) {
+                        if ($state === 'published') {
+                            $set('published_at', now());
+                        }
+                    })
                     ->required(),
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
@@ -81,7 +86,8 @@ class PostResource extends Resource
                     ->preload()
                     ->searchable()
                     ->required(),
-                Forms\Components\DateTimePicker::make('published_at')->disabled(),
+                Forms\Components\DateTimePicker::make('published_at')
+                    ->disabled(fn ($get) => $get('status') !== 'published'),
             ]);
     }
 
@@ -91,7 +97,22 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'draft' => 'Draft',
+                        'published' => 'Published',
+                        'archived' => 'Archived',
+                        default => ucfirst($state),
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'published' => 'success',
+                        'archived' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Autor')
                     ->searchable()
