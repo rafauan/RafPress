@@ -12,7 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use FilamentTiptapEditor\TiptapEditor;
+// use FilamentTiptapEditor\TiptapEditor;
 
 class PostResource extends Resource
 {
@@ -28,24 +28,13 @@ class PostResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
-                Forms\Components\Repeater::make('media')
-                    ->relationship('media')
-                    ->schema([
-                        Forms\Components\FileUpload::make('path')
-                            ->label('Obraz')
-                            ->disk('public')
-                            ->directory('uploads/media')
-                            ->image()
-                            ->preserveFilenames()
-                            ->required(),
-
-                        Forms\Components\TextInput::make('caption')
-                            ->label('Opis')
-                            ->maxLength(255),
-                    ])
-                    ->maxItems(1)
-                    ->label('Zdjęcie')
-                    ->columns(1)
+                Forms\Components\FileUpload::make('image')
+                    ->label('Image')
+                    ->disk('public')
+                    ->directory('uploads/posts')
+                    ->image()
+                    ->preserveFilenames()
+                    ->required()
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('content')
                     ->required()
