@@ -5,12 +5,12 @@
 ![Widok posta](./public/main.png)
 
 ## **🔧 Stack technologiczny**
--   **Backend**: Laravel 11
+-   **Backend**: Laravel 12
 -   **Baza danych**: MySQL
 -   **Panel administracyjny**: Filament PHP v3
 -   **Wysyłka e-maili**: Laravel Mail
 
-## **✨ Funkcje**
+## **✨ Aktualne funkcje**
 -   CRUD postów z obsługą:
     -   zdjęcia,
     -   treści,
