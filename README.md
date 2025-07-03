@@ -2,6 +2,8 @@
 
 **RafPress** to prosty system blogowy zbudowany w oparciu o **Laravel**, **MySQL** oraz **Filament PHP**. Projekt posiada panel administracyjny z możliwością zarządzania treściami, użytkownikami, kategoriami i tagami, oraz systemem wysyłki powiadomień e-mail przy publikacji postów.
 
+![Widok posta](./public/main.png)
+
 ## **🔧 Stack technologiczny**
 -   **Backend**: Laravel 11
 -   **Baza danych**: MySQL
