@@ -20,11 +20,6 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'status' => $this->status,
             'excerpt' => Str::limit($this->content, 150),
-            'image' => $this->media ? [
-                'id' => $this->media->id,
-                'path' => $this->media->path,
-                'caption' => $this->media->caption,
-            ] : null,
             'author' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,

@@ -48,10 +48,6 @@ class LikeResource extends Resource
                             return \App\Models\Post::pluck('title', 'id');
                         }
 
-                        if ($type === 'App\Models\Media') {
-                            return \App\Models\Media::pluck('caption', 'id');
-                        }
-
                         return [];
                     }),
             ]);
