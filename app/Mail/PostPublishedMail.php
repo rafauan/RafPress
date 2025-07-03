@@ -9,18 +9,21 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Post;
+use App\Models\User;
 
-class PostPublishedMail extends Mailable
+class PostPublishedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     public Post $post;
+    public ?User $author = null;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Post $post)
+    public function __construct(Post $post, User $author)
     {
         $this->post = $post;
+        $this->author = $author;
     }
 
     /**
@@ -40,6 +43,10 @@ class PostPublishedMail extends Mailable
     {
         return new Content(
             markdown: 'emails.post.published',
+            with: [
+                'post' => $this->post,
+                'author' => $this->author,
+            ]
         );
     }
 

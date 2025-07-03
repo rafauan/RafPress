@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\TrashedFilter;
 // use FilamentTiptapEditor\TiptapEditor;
 
 class PostResource extends Resource
@@ -19,6 +20,11 @@ class PostResource extends Resource
     protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withTrashed();
+    }
 
     public static function form(Form $form): Form
     {
@@ -51,12 +57,7 @@ class PostResource extends Resource
                         'archived' => 'Archived',
                     ])
                     ->default('draft')
-                    ->afterStateUpdated(function ($state, $set, $get) {
-                        if ($state === 'published') {
-                            $set('published_at', now());
-                        }
-                    })
-                    ->required(),
+                    ->disabled(),
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required()
@@ -76,7 +77,7 @@ class PostResource extends Resource
                     ->searchable()
                     ->required(),
                 Forms\Components\DateTimePicker::make('published_at')
-                    ->disabled(fn ($get) => $get('status') !== 'published'),
+                    ->disabled(),
             ]);
     }
 
@@ -119,7 +120,7 @@ class PostResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -127,8 +128,9 @@ class PostResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => in_array(auth()->user()->role->name, ['Admin', 'Editor']))
+                    ]),
             ]);
     }
 

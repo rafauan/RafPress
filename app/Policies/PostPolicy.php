@@ -13,8 +13,8 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        return $user->role === 'Admin'
-            || $user->role === 'Editor'
+        return $user->role->name === 'Admin'
+            || $user->role->name === 'Editor'
             || $user->id === $post->user_id;
     }
 

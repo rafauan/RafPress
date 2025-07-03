@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Mail\PostPublishedMail;
-use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'content',
@@ -45,20 +46,5 @@ class Post extends Model
     public function likes()
     {
         return $this->morphMany(Like::class, 'likeable');
-    }
-
-    protected static function booted()
-    {
-        static::updated(function ($post) {
-            if ($post->wasChanged('status') && $post->status === 'published') {
-
-                $admins = User::whereHas('role', function ($query) {
-                    $query->where('name', 'Admin');
-                })->get();
-                foreach ($admins as $admin) {
-                    Mail::to($admin->email)->send(new PostPublishedMail($post->load('user')));
-                }
-            }
-        });
     }
 }

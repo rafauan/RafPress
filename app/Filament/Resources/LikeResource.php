@@ -48,6 +48,10 @@ class LikeResource extends Resource
                             return \App\Models\Post::pluck('title', 'id');
                         }
 
+                        if ($type === 'App\Models\Comment') {
+                            return \App\Models\Comment::pluck('caption', 'id');
+                        }
+
                         return [];
                     }),
             ]);
@@ -94,8 +98,9 @@ class LikeResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => in_array(auth()->user()->role->name, ['Admin', 'Editor']))
+                    ]),
             ]);
     }
 
