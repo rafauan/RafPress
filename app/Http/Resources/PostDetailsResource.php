@@ -19,11 +19,7 @@ class PostDetailsResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'status' => $this->status,
-            'image' => $this->media ? [
-                'id' => $this->media->id,
-                'path' => $this->media->path,
-                'caption' => $this->media->caption,
-            ] : null,
+            'image' => $this->image ? asset('storage/' . $this->image) : null,
             'author' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,

@@ -27,7 +27,7 @@ class ViewPost extends ViewRecord
                         ->success()
                         ->send();
                 })
-                ->visible(fn () => $this->record->status !== 'published'),
+                ->visible(fn () => $this->record->status !== 'published' && $this->record->status !== 'archived'),
         ];
     }
 }

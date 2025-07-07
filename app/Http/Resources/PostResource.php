@@ -18,8 +18,10 @@ class PostResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'slug' => Str::slug($this->title),
             'status' => $this->status,
             'excerpt' => Str::limit($this->content, 150),
+            'image' => $this->image ? asset('storage/' . $this->image) : null,
             'author' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
