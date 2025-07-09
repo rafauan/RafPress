@@ -1,18 +1,38 @@
 <x-mail::message>
-# New post has been published
+# 🎉 New Post Published!
 
-User <strong>{{ $author->name }}</strong> has published a new post.
+Hello there,
 
-<h2>{{ $post->title }}</h2>
+We're excited to share that **{{ $author->name }}** has just published a new post on {{ config('app.name') }}!
 
-@if($post->image)
-<img src="{{ asset('storage/' . $post->image) }}" alt="Post image" style="width: 506px; height: 300px; margin-top: 20px; object-fit: contain; display: block;" />
+## 📖 {{ $post->title }}
+
+@if($post->excerpt)
+<x-mail::panel>
+{{ $post->excerpt }}
+</x-mail::panel>
 @endif
 
-<x-mail::button :url="route('posts.show', $post)">
-Check it out
+@if($post->image)
+<div style="text-align: center; margin: 20px 0;">
+    <img src="{{ asset('storage/' . $post->image) }}"
+         alt="{{ $post->title }}"
+         style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+</div>
+@endif
+
+**Author:** {{ $author->name }}
+**Category:** {{ $post->category->name ?? 'Uncategorized' }}
+**Published:** {{ $post->created_at->format('M j, Y \a\t g:i A') }}
+
+<x-mail::button :url="url('/admin/posts/' . $post->id)">
+Read Full Post
 </x-mail::button>
 
-Thanks,<br>
-{{ config('app.name') }}
+---
+
+Don't miss out on the latest content! 📚✨
+
+Best regards,<br>
+{{ config('app.name') }} Team
 </x-mail::message>

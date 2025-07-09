@@ -42,6 +42,9 @@ class UserResource extends Resource
                     ->searchable()
                     ->nullable()
                     ->columnSpanFull(),
+                Forms\Components\Toggle::make('is_active')
+                    ->inline(),
+
             ]);
     }
 

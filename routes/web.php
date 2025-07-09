@@ -19,6 +19,8 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 
     if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
+        $user->is_active = true;
+        $user->save();
     }
 
     return view('email-verified');

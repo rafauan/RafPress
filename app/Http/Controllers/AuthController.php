@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -33,59 +34,46 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // public function sendVerificationMail(Request $request)
-    // {
-    //     $user = Auth::user();
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    //     if (!$user) {
-    //         return response()->json([
-    //             'message' => 'User not authenticated'
-    //         ], 401);
-    //     }
+        $credentials['is_active'] = true; // Ensure the user is active
 
-    //     if ($user->email_verified_at) {
-    //         return response()->json([
-    //             'message' => 'Email already verified'
-    //         ], 400);
-    //     }
+        $executed = RateLimiter::attempt(
+            'login:' . $request->ip(),
+            5, // Allow 5 attempts per minute
+            function () {}
+        );
 
-    //     $user->sendEmailVerificationNotification();
+        if (!$executed) {
+            return response()->json([
+                'message' => 'Too many login attempts. Please try again later.'
+            ], 429);
+        }
 
-    //     return response()->json([
-    //         'message' => 'Verification email sent successfully',
-    //     ]);
-    // }
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
 
-    // public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => $user,
+                'token' => $user->createToken('auth_token')->plainTextToken,
+            ]);
+        }
 
-    //     if (Auth::attempt($request->only('email', 'password'))) {
-    //         $user = Auth::user();
-    //         $request->session()->regenerate();
+        return response()->json([
+            'message' => 'Invalid credentials'
+        ], 401);
+    }
 
-    //         return response()->json([
-    //             'message' => 'Login successful',
-    //             'user' => $user,
-    //         ]);
-    //     }
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
 
-    //     return response()->json([
-    //         'message' => 'Invalid credentials'
-    //     ], 401);
-    // }
-
-    // public function logout(Request $request)
-    // {
-    //     Auth::logout();
-    //     $request->session()->invalidate();
-    //     $request->session()->regenerateToken();
-
-    //     return response()->json([
-    //         'message' => 'Logout successful'
-    //     ]);
-    // }
+        return response()->json(['message' => 'Logged out']);
+    }
 }

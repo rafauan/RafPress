@@ -10,14 +10,6 @@ use Illuminate\Support\Facades\Mail;
 class PostObserver
 {
     /**
-     * Handle the Post "created" event.
-     */
-    public function created(Post $post): void
-    {
-        //
-    }
-
-    /**
      * Handle the Post "updated" event.
      */
     public function updated(Post $post): void

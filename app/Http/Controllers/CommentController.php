@@ -18,9 +18,24 @@ class CommentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $request->validate([
+            'content' => 'required|string|max:1000',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $comment = Comment::create([
+            'user_id' => $request->user()->id,
+            'post_id' => $request->post_id,
+            'content' => $request->content,
+            'is_approved' => false, // Default to false, can be changed later
+        ]);
+
+        return response()->json([
+            'message' => 'Comment created successfully',
+            'comment' => $comment,
+        ], 201);
     }
 
     /**
