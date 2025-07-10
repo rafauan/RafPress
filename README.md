@@ -18,6 +18,7 @@
     -   kategorii,
     -   autora,
     -   statusu (draft, published, archived),
+    -   soft deletes (możliwość przywracania usuniętych postów),
     -   komentarzy z systemem zatwierdzania,
     -   polubień (posty i komentarze)
 -   **System uprawnień** oparty na rolach (Admin, Editor, Reader)
@@ -25,6 +26,7 @@
     -   przyciskiem Publish dostępnym z widoku posta,
     -   reaktywnymi akcjami (approve comment),
     -   intuicyjnym layoutem (edytor po lewej, ustawienia po prawej),
+    -   filtrami dla usuniętych postów (Trashed Filter),
     -   widgets i statystyki na dashboardzie
 -   **System powiadomień email**:
     -   automatyczna wysyłka przy publikacji posta,
