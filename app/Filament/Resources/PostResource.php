@@ -11,7 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TrashedFilter;
-// use FilamentTiptapEditor\TiptapEditor;
+use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Support\Facades\Auth;
 
 class PostResource extends Resource
 {
@@ -28,55 +29,62 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->label('Image')
-                    ->disk('public')
-                    ->directory('uploads/posts')
-                    ->image()
-                    ->preserveFilenames()
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('content')
-                    ->required()
-                    ->rows(10)
-                    ->columnSpanFull(),
-                // TiptapEditor::make('content')
-                //     ->profile('simple')
-                //     ->columnSpanFull()
-                //     ->required(),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'archived' => 'Archived',
+                Forms\Components\Section::make('Content')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        TiptapEditor::make('content')
+                            ->profile('default')
+                            ->columnSpanFull()
+                            ->required(),
                     ])
-                    ->default('draft'),
-                    // ->disabled(),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required()
-                    ->preload()
-                    ->default(auth()->id())
-                    ->searchable(),
-                Forms\Components\Select::make('category_id')
-                    ->relationship('category', 'name')
-                    ->preload()
-                    ->required()
-                    ->searchable(),
-                Forms\Components\Select::make('tags')
-                    ->label('Tags')
-                    ->multiple()
-                    ->relationship('tags', 'name')
-                    ->preload()
-                    ->searchable()
-                    ->required(),
-                Forms\Components\DateTimePicker::make('published_at')
-                    ->disabled(),
-            ]);
+                    ->columnSpan(2),
+
+                Forms\Components\Section::make('Settings')
+                    ->schema([
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Featured Image')
+                            ->disk('public')
+                            ->directory('uploads/posts')
+                            ->image()
+                            ->preserveFilenames()
+                            ->required(),
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'published' => 'Published',
+                                'archived' => 'Archived',
+                            ])
+                            ->default('draft')
+                            ->disabled(),
+                        Forms\Components\Select::make('user_id')
+                            ->label('Author')
+                            ->relationship('user', 'name')
+                            ->required()
+                            ->preload()
+                            ->default(Auth::id())
+                            ->searchable(),
+                        Forms\Components\Select::make('category_id')
+                            ->label('Category')
+                            ->relationship('category', 'name')
+                            ->preload()
+                            ->required()
+                            ->searchable(),
+                        Forms\Components\Select::make('tags')
+                            ->label('Tags')
+                            ->multiple()
+                            ->relationship('tags', 'name')
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->disabled(),
+                    ])
+                    ->columnSpan(1),
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -127,7 +135,7 @@ class PostResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => in_array(auth()->user()->role->name, ['Admin', 'Editor']))
+                        ->visible(fn () => in_array(Auth::user()->role->name, ['Admin', 'Editor']))
                     ]),
             ]);
     }

@@ -26,6 +26,8 @@ class ViewPost extends ViewRecord
                         ->title('Post has been published')
                         ->success()
                         ->send();
+
+                    $this->refreshFormData(['status']);
                 })
                 ->visible(fn () => $this->record->status !== 'published' && $this->record->status !== 'archived'),
         ];
