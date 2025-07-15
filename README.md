@@ -27,6 +27,7 @@
     -   reaktywnymi akcjami (approve comment),
     -   intuicyjnym layoutem (edytor po lewej, ustawienia po prawej),
     -   filtrami dla usuniętych postów (Trashed Filter),
+    -   eksportem postów do CSV/Excel (Laravel Excel),
     -   widgets i statystyki na dashboardzie
 -   **System powiadomień email**:
     -   automatyczna wysyłka przy publikacji posta,
