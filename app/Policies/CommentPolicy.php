@@ -2,29 +2,27 @@
 
 namespace App\Policies;
 
-use App\Models\Comment;
 use App\Models\User;
-use App\Policies\PostPolicy;
 
 class CommentPolicy
 {
-    public function view(User $user, Comment $item): bool
+    public function view(User $user): bool
     {
-        return app(PostPolicy::class)->view($user, $item->post);
+        return in_array($user->role, ['admin', 'editor', 'publisher']);
     }
 
     public function create(User $user): bool
     {
-        return app(PostPolicy::class)->create($user);
+        return in_array($user->role, ['admin']);
     }
 
-    public function update(User $user, Comment $item): bool
+    public function update(User $user): bool
     {
-        return app(PostPolicy::class)->update($user, $item->post);
+        return in_array($user->role, ['admin']);
     }
 
-    public function delete(User $user, Comment $item): bool
+    public function delete(User $user): bool
     {
-        return app(PostPolicy::class)->delete($user, $item->post);
+        return in_array($user->role, ['admin']);
     }
 }

@@ -99,7 +99,7 @@ class LikeResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => in_array(auth()->user()->role->name, ['Admin', 'Editor']))
+                        ->visible(fn () => in_array(auth()->user()->role, ['admin', 'editor']))
                     ]),
             ]);
     }

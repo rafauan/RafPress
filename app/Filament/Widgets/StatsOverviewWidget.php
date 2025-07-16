@@ -65,7 +65,7 @@ class StatsOverviewWidget extends BaseWidget
             $newPosts,
         ];
 
-        if (Auth::user()->role->name === 'Admin') {
+        if (Auth::user()->role === 'admin') {
             $stats[] = $users;
         }
 

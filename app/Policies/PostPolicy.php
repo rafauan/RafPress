@@ -13,9 +13,7 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        return $user->role->name === 'Admin'
-            || $user->role->name === 'Editor'
-            || $user->id === $post->user_id;
+        return in_array($user->role, ['admin', 'editor', 'publisher']) || $user->id === $post->user_id;
     }
 
     /**
@@ -23,7 +21,7 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return in_array($user->role->name, ['Admin', 'Editor', 'Publisher']);
+        return in_array($user->role, ['admin', 'editor', 'publisher']);
     }
 
     /**
@@ -31,9 +29,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->role->name === 'Admin'
-            || $user->role->name === 'Editor'
-            || $user->id === $post->user_id;
+        return in_array($user->role, ['admin', 'editor', 'publisher']) || $user->id === $post->user_id;
     }
 
     /**
@@ -41,25 +37,6 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->role->name === 'Admin'
-            || $user->role->name === 'Editor'
-            || $user->id === $post->user_id;
+        return in_array($user->role, ['admin', 'editor', 'publisher']) || $user->id === $post->user_id;
     }
-
-    // On the future
-    // /**
-    //  * Determine whether the user can restore the model.
-    //  */
-    // public function restore(User $user, Post $post): bool
-    // {
-    //     return $user->role->name === 'Admin' || $user->id === $post->user_id;
-    // }
-
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(User $user, Post $post): bool
-    // {
-    //     return $user->role->name === 'Admin' || $user->id === $post->user_id;
-    // }
 }

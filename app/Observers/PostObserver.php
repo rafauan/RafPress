@@ -19,7 +19,7 @@ class PostObserver
                 'published_at' => now(),
             ]);
 
-            $admins = User::whereHas('role', fn ($query) => $query->where('name', 'Admin'))->get();
+            $admins = User::where('role', 'admin')->get();
 
             foreach ($admins as $admin) {
                 Mail::to($admin->email)->queue(new PostPublishedMail($post->fresh('user'), auth()->user()));

@@ -7,25 +7,28 @@ use App\Models\Tag;
 
 class TagPolicy
 {
-    public function view(User $user, Tag $model): bool
+    public function viewAny(User $user): bool
     {
-        return $user->id === $model->id
-            || $user->role->name === 'Admin'
-            || $user->role->name === 'Editor';
+        return in_array($user->role, ['admin', 'editor']);
+    }
+
+    public function view(User $user): bool
+    {
+        return in_array($user->role, ['admin', 'editor']);
     }
 
     public function create(User $user): bool
     {
-        return $user->role->name === 'Admin' || $user->role->name === 'Editor';
+        return $user->role === 'admin' || $user->role === 'editor';
     }
 
     public function update(User $user): bool
     {
-        return $user->role->name === 'Admin' || $user->role->name === 'Editor';
+        return $user->role === 'admin' || $user->role === 'editor';
     }
 
     public function delete(User $user): bool
     {
-        return $user->role->name === 'Admin' || $user->role->name === 'Editor';
+        return $user->role === 'admin' || $user->role === 'editor';
     }
 }

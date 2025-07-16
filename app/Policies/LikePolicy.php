@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class CategoryPolicy
+class LikePolicy
 {
     public function viewAny(User $user): bool
     {
@@ -14,25 +14,25 @@ class CategoryPolicy
 
     public function view(User $user): bool
     {
-        // Allow all authenticated users to view a specific category
-        return in_array($user->role, ['admin', 'editor']);
+        // Allow all authenticated users to view likes
+        return in_array($user->role, ['admin', 'editor', 'publisher']);
     }
 
     public function create(User $user): bool
     {
-        // Allow only admin and editor to create categories
-        return in_array($user->role, ['admin', 'editor']);
+        // Allow all authenticated users to create likes
+        return in_array($user->role, ['admin']);
     }
 
     public function update(User $user): bool
     {
-        // Allow only admin and editor to update categories
-        return in_array($user->role, ['admin', 'editor']);
+        // Allow only admin to update likes
+        return $user->role === 'admin';
     }
 
     public function delete(User $user): bool
     {
-        // Allow only admin to delete categories
+        // Allow only admin to delete likes
         return $user->role === 'admin';
     }
 }

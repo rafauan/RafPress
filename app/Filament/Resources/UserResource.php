@@ -35,13 +35,16 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('role_id')
+                Forms\Components\Select::make('role')
                     ->label('Role')
-                    ->relationship('role', 'name')
-                    ->preload()
-                    ->searchable()
-                    ->nullable()
-                    ->columnSpanFull(),
+                    ->options([
+                        'admin' => 'Admin',
+                        'editor' => 'Editor',
+                        'publisher' => 'Publisher',
+                        'reader' => 'Reader',
+                    ])
+                    ->default('reader')
+                    ->required(),
                 Forms\Components\Toggle::make('is_active')
                     ->inline(),
 
@@ -60,8 +63,15 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('role.name')
+                Tables\Columns\TextColumn::make('role')
                     ->label('Role')
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'admin' => 'Admin',
+                        'editor' => 'Editor',
+                        'publisher' => 'Publisher',
+                        'reader' => 'Reader',
+                        default => ucfirst($state),
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

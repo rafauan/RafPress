@@ -23,7 +23,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'name' => $request->name,
-            'role_id' => Role::where('name', 'Reader')->first()->id,
+            // 'role_id' => Role::where('name', 'Reader')->first()->id,
         ]);
 
         event(new Registered($user));

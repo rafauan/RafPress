@@ -23,7 +23,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'name',
         'email',
         'password',
-        'role_id',
+        'role',
         'is_active', // New attribute to check if the user is active
     ];
 
@@ -48,10 +48,5 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 }

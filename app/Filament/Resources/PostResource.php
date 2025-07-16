@@ -147,7 +147,7 @@ class PostResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => in_array(Auth::user()->role->name, ['Admin', 'Editor']))
+                        ->visible(fn () => in_array(Auth::user()->role, ['admin', 'editor']))
                     ]),
             ]);
     }
