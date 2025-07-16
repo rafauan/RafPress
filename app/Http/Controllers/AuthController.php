@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -23,14 +22,19 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'name' => $request->name,
-            // 'role_id' => Role::where('name', 'Reader')->first()->id,
+            'role' => 'reader', // Default role
         ]);
 
         event(new Registered($user));
 
         return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user,
+            'message' => 'User registered successfully. Please verify your email.',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
         ], 201);
     }
 
@@ -41,29 +45,42 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $credentials['is_active'] = true; // Ensure the user is active
+        // Check rate limiting BEFORE attempting login
+        $rateLimitKey = 'login:' . $request->ip();
 
-        $executed = RateLimiter::attempt(
-            'login:' . $request->ip(),
-            5, // Allow 5 attempts per minute
-            function () {}
-        );
-
-        if (!$executed) {
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            $seconds = RateLimiter::availableIn($rateLimitKey);
             return response()->json([
-                'message' => 'Too many login attempts. Please try again later.'
+                'message' => "Too many login attempts. Please try again in {$seconds} seconds."
             ], 429);
         }
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
+            // Clear rate limiting on successful login
+            RateLimiter::clear($rateLimitKey);
+
+            if (!$user->email_verified_at) {
+                return response()->json([
+                    'message' => 'Email not verified. Please verify your email before logging in.'
+                ], 403);
+            }
+
             return response()->json([
                 'message' => 'Login successful',
-                'user' => $user,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ],
                 'token' => $user->createToken('auth_token')->plainTextToken,
             ]);
         }
+
+        // Hit rate limiter on failed attempt
+        RateLimiter::hit($rateLimitKey, 60); // 60 seconds decay
 
         return response()->json([
             'message' => 'Invalid credentials'
